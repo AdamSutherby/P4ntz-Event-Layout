@@ -1,0 +1,32 @@
+{
+    "name": "nodecg-streamer-goals",
+    "version": "0.0.1",
+    "description": "A streamer goals tracker for NodeCG",
+    "homepage": "",
+    "author": {
+      "name": "Adam Sutherby",
+      "email": "AdamSutherby@example.com",
+      "url": "https://example.com"
+    },
+    "nodecg": {
+      "compatibleRange": "^1.1.1",
+      "dashboardPanels": [
+        {
+          "name": "streamer-goals-control",
+          "title": "Streamer Goals Control",
+          "width": 4,
+          "file": "panel.html",
+          "headerColor": "#525F78"
+        }
+      ],
+      "graphics": [
+        {
+          "file": "index.html",
+          "width": 1920,
+          "height": 1080
+        }
+      ]
+    }
+  }
+  
+  
