@@ -6,7 +6,6 @@ interface RecurringGoalProps {
   updateGoal: (goal: RecurringGoalType) => void;
   currentAmount: number;
   symbol: string;
-  symbolPosition: 'left' | 'right';
 }
 
 const RecurringGoal: React.FC<RecurringGoalProps> = ({
@@ -14,7 +13,6 @@ const RecurringGoal: React.FC<RecurringGoalProps> = ({
   updateGoal,
   currentAmount,
   symbol,
-  symbolPosition
 }) => {
   const [interval, setInterval] = useState("")
   const [action, setAction] = useState("")

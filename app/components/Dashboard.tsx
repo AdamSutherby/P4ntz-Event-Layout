@@ -180,7 +180,6 @@ export default function Dashboard() {
           updateGoal={updateRecurringGoal}
           currentAmount={data.currentAmount}
           symbol={data.symbol}
-          symbolPosition={data.symbolPosition}
         />
         <TickerCustomization items={data.tickerItems} updateItems={updateTickerItems} />
         <div className="mt-8">
