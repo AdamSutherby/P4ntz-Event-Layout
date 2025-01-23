@@ -6,7 +6,6 @@ interface SetGoalProps {
   updateGoal: (goal: Goal) => void;
   currentAmount: number;
   symbol: string;
-  symbolPosition: 'left' | 'right';
 }
 
 const SetGoal: React.FC<SetGoalProps> = ({
@@ -14,7 +13,6 @@ const SetGoal: React.FC<SetGoalProps> = ({
   updateGoal,
   currentAmount,
   symbol,
-  symbolPosition
 }) => {
   const [name, setName] = useState("")
   const [target, setTarget] = useState("")

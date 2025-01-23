@@ -1,4 +1,3 @@
-import type { ReactElement } from "react"
 import { useState, useEffect, useRef, isValidElement } from "react"
 import type { Goal, RecurringGoalType } from "./Dashboard"
 
@@ -58,7 +57,7 @@ const ProgressBar = ({
 
   return (
     <div className="w-full" style={{ flex: weight }}>
-      <p className="font-bold mb-1 text-[#FF71CE] text-shadow-neon">{label}</p>
+      <p className="font-['Press_Start_2P'] mb-1 text-[#FF71CE] text-shadow-neon text-base">{label}</p>
       <div className="relative h-10 bg-[#01012B] rounded-full overflow-hidden border-2 border-[#05FFA1]">
         <div
           className="absolute inset-0 bg-gradient-to-r from-[#B967FF] to-[#FF71CE] transition-all duration-1000 ease-out"
@@ -75,14 +74,27 @@ const ProgressBar = ({
           )}
         </div>
         <div className="absolute inset-0 flex items-center justify-between px-3">
-          <span className="text-white text-shadow-neon font-bold transition-all duration-1000">{formatAmount(current)}</span>
-          <span className="text-white text-shadow-neon font-bold transition-all duration-1000">{progress.toFixed(1)}%</span>
-          <span className="text-white text-shadow-neon font-bold">{formatAmount(target)}</span>
+          <span className="text-white font-['Press_Start_2P'] text-sm transition-all duration-1000 text-shadow-neon-sm tracking-wider">{formatAmount(current)}</span>
+          <span className="text-white font-['Press_Start_2P'] text-sm transition-all duration-1000 text-shadow-neon-sm tracking-wider">{progress.toFixed(1)}%</span>
+          <span className="text-white font-['Press_Start_2P'] text-sm text-shadow-neon-sm tracking-wider">{formatAmount(target)}</span>
         </div>
       </div>
     </div>
   )
 }
+
+const formatCustomContent = (content: React.ReactElement | string) => {
+  if (isValidElement(content)) {
+    return content;
+  }
+  return (
+    <div className="w-full">
+      <p className="text-white font-['Press_Start_2P'] text-xl text-shadow-neon text-center">
+        {content}
+      </p>
+    </div>
+  );
+};
 
 export default function NewsTicker({
   setGoal,
@@ -174,7 +186,7 @@ export default function NewsTicker({
 
     const recurringItems = getRecurringGoalInfo()
     const mappedCustomItems = (customItems || []).map((item) => ({ 
-      content: item.content, 
+      content: formatCustomContent(item.content),
       weight: 1,
       type: 'custom',
       id: item.id 
@@ -486,6 +498,11 @@ export default function NewsTicker({
             background-position: 0 0, 100px 0, 0 100px;
           }
         }
+
+        .text-shadow-neon-sm {
+          text-shadow: 0 0 2px #01FFFF, 0 0 4px #01FFFF, 0 0 6px #01FFFF;
+          animation: neon-flicker 1.5s infinite alternate;
+        }
       `}</style>
       <div className="content-wrapper">
         <div className={`content-fade ${isContentVisible && isVisible ? 'visible' : ''}`}>
@@ -495,4 +512,3 @@ export default function NewsTicker({
     </div>
   )
 }
-

@@ -12,7 +12,11 @@ export default function TickerCustomization({ items, updateItems }: TickerCustom
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (newItem.trim()) {
-      const updatedItems = [...items, { id: Date.now().toString(), content: newItem.trim() }]
+      const updatedItems = [...items, { 
+        id: Date.now().toString(), 
+        content: newItem.trim(),
+        type: items[0]?.type || 'default' // Use existing type or default
+      }]
       updateItems(updatedItems)
       setNewItem("")
     }
@@ -57,4 +61,3 @@ export default function TickerCustomization({ items, updateItems }: TickerCustom
     </div>
   )
 }
-
