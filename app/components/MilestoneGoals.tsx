@@ -6,7 +6,6 @@ interface MilestoneGoalsProps {
   updateGoals: (goals: Goal[]) => void;
   currentAmount: number;
   symbol: string;
-  symbolPosition: 'left' | 'right';
 }
 
 const MilestoneGoals: React.FC<MilestoneGoalsProps> = ({
@@ -14,7 +13,6 @@ const MilestoneGoals: React.FC<MilestoneGoalsProps> = ({
   updateGoals,
   currentAmount,
   symbol,
-  symbolPosition
 }) => {
   const [name, setName] = useState("")
   const [target, setTarget] = useState("")

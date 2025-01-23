@@ -84,7 +84,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     saveData(data)
-  }, [data])
+  }, [data, saveData])
 
   const sendTickerUpdate = (updateData: Partial<DashboardData>) => {
     const event = new CustomEvent("tickerUpdate", { detail: updateData })
@@ -168,14 +168,12 @@ export default function Dashboard() {
           updateGoal={updateSetGoal}
           currentAmount={data.currentAmount}
           symbol={data.symbol}
-          symbolPosition={data.symbolPosition}
         />
         <MilestoneGoals
           goals={data.milestoneGoals}
           updateGoals={updateMilestoneGoals}
           currentAmount={data.currentAmount}
           symbol={data.symbol}
-          symbolPosition={data.symbolPosition}
         />
         <RecurringGoal
           goal={data.recurringGoal}
