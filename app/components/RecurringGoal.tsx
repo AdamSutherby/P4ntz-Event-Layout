@@ -3,7 +3,7 @@ import { RecurringGoalType } from './Dashboard'
 
 interface RecurringGoalProps {
   goal: RecurringGoalType | null;
-  updateGoal: (goal: RecurringGoalType) => void;
+  updateGoal: (goal: RecurringGoalType | null) => void;
   currentAmount: number;
   symbol: string;
 }
@@ -34,11 +34,27 @@ const RecurringGoal: React.FC<RecurringGoalProps> = ({
     })
   }
 
+  const handleRemove = () => {
+    updateGoal(null)
+    setInterval("")
+    setAction("")
+  }
+
   const nextMilestone = goal ? Math.ceil(currentAmount / goal.interval) * goal.interval : 0
 
   return (
     <div className="p-4 border rounded">
-      <h2 className="text-2xl font-bold mb-4">Recurring Goal: {goal?.action}</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Recurring Goal: {goal?.action}</h2>
+        {goal && (
+          <button
+            onClick={handleRemove}
+            className="text-red-500 hover:text-red-700"
+          >
+            Remove Goal
+          </button>
+        )}
+      </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="interval" className="block mb-1">
