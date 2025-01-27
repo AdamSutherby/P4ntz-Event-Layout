@@ -1,38 +1,43 @@
 import { useState } from "react"
-import { Goal } from './Dashboard'
+import type { Goal } from "./Dashboard"
 
 interface MilestoneGoalsProps {
-  goals: Goal[];
-  updateGoals: (goals: Goal[]) => void;
-  currentAmount: number;
-  symbol: string;
+  goals: Goal[]
+  updateGoals: (goals: Goal[]) => void
+  currentAmount: number
+  symbol: string
 }
 
-const MilestoneGoals: React.FC<MilestoneGoalsProps> = ({
+export default function MilestoneGoals({
   goals,
   updateGoals,
   currentAmount,
   symbol,
-}) => {
-  const [name, setName] = useState("")
-  const [target, setTarget] = useState("")
+}: MilestoneGoalsProps) {
+  const [newGoalName, setNewGoalName] = useState("")
+  const [newGoalTarget, setNewGoalTarget] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleAddGoal = (e: React.FormEvent) => {
     e.preventDefault()
     const newGoal: Goal = {
       id: Date.now().toString(),
-      name,
-      target: Number.parseFloat(target),
+      name: newGoalName,
+      target: Number(newGoalTarget),
+      progress: 0 // Initialize progress to 0
     }
-    updateGoals([...goals, newGoal].sort((a, b) => a.target - b.target))
-    setName("")
-    setTarget("")
+    updateGoals([...goals, newGoal])
+    setNewGoalName("")
+    setNewGoalTarget("")
+  }
+
+  const handleRemoveGoal = (id: string) => {
+    updateGoals(goals.filter((goal) => goal.id !== id))
   }
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Milestone Goals</h2>
-      <form onSubmit={handleSubmit} className="space-y-4 mb-4">
+      <form onSubmit={handleAddGoal} className="space-y-4 mb-4">
         <div>
           <label htmlFor="name" className="block mb-1">
             Goal Name
@@ -40,8 +45,8 @@ const MilestoneGoals: React.FC<MilestoneGoalsProps> = ({
           <input
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={newGoalName}
+            onChange={(e) => setNewGoalName(e.target.value)}
             className="w-full p-2 border rounded"
             required
           />
@@ -53,43 +58,56 @@ const MilestoneGoals: React.FC<MilestoneGoalsProps> = ({
           <input
             type="number"
             id="target"
-            value={target}
-            onChange={(e) => setTarget(e.target.value)}
+            value={newGoalTarget}
+            onChange={(e) => setNewGoalTarget(e.target.value)}
             className="w-full p-2 border rounded"
             required
             min="0"
             step="0.01"
           />
         </div>
-        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
           Add Milestone Goal
         </button>
       </form>
       <div className="space-y-4">
-        {goals.map((goal) => {
-          const progress = (currentAmount / goal.target) * 100
-          return (
-            <div key={goal.id} className="border p-4 rounded">
+        {goals.map((goal) => (
+          <div
+            key={goal.id}
+            className="border p-4 rounded flex flex-col space-y-2"
+          >
+            <div className="flex justify-between items-center">
               <h3 className="font-bold">{goal.name}</h3>
-              <p>
-                Target: {symbol}
-                {goal.target.toFixed(2)}
-              </p>
+              <button
+                onClick={() => handleRemoveGoal(goal.id)}
+                className="text-red-500"
+              >
+                Remove
+              </button>
+            </div>
+            <div>
               <p>
                 Progress: {symbol}
-                {currentAmount.toFixed(2)} / {symbol}
-                {goal.target.toFixed(2)} ({progress.toFixed(1)}%)
+                {goal.progress?.toFixed(2)} / {symbol}
+                {goal.target.toFixed(2)} (
+                {((goal.progress || 0) / goal.target * 100).toFixed(1)}%)
               </p>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-                <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${Math.min(100, progress)}%` }}></div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      ((goal.progress || 0) / goal.target) * 100
+                    )}%`,
+                  }}
+                ></div>
               </div>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
     </div>
   )
 }
-
-export default MilestoneGoals;
 

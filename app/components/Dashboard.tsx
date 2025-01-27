@@ -13,6 +13,7 @@ export type Goal = {
   id: string
   name: string
   target: number
+  progress: number  // Add this field
 }
 
 export type RecurringGoalType = {
@@ -58,7 +59,18 @@ export default function Dashboard() {
   useEffect(() => {
     const savedData = localStorage.getItem("streamerGoalsData")
     if (savedData) {
-      setData(JSON.parse(savedData))
+      const parsed = JSON.parse(savedData)
+      // Ensure all goals have a progress property
+      if (parsed.setGoal) {
+        parsed.setGoal.progress = parsed.setGoal.progress || 0
+      }
+      if (parsed.milestoneGoals) {
+        parsed.milestoneGoals = parsed.milestoneGoals.map((goal: Goal) => ({
+          ...goal,
+          progress: goal.progress || 0
+        }))
+      }
+      setData(parsed)
     }
   }, [])
 
@@ -91,7 +103,7 @@ export default function Dashboard() {
     window.dispatchEvent(event)
   }
 
-  const updateSetGoal = (goal: Goal) => {
+  const updateSetGoal = (goal: Goal | null) => { // Change parameter type to allow null
     setData((prevData) => ({ ...prevData, setGoal: goal }))
   }
 
@@ -103,16 +115,36 @@ export default function Dashboard() {
     setLastAddedAmount(amount)
     setData((prevData) => {
       const newAmount = Math.max(0, prevData.currentAmount + amount)
-      const newData = { ...prevData, currentAmount: newAmount }
-      checkCompletedGoals(newAmount)
+      
+      // Update progress for all goals
+      const updatedSetGoal = prevData.setGoal ? {
+        ...prevData.setGoal,
+        progress: Math.max(0, prevData.setGoal.progress + amount)
+      } : null
+
+      const updatedMilestoneGoals = prevData.milestoneGoals.map(goal => ({
+        ...goal,
+        progress: Math.max(0, goal.progress + amount)
+      }))
+
+      const newData = {
+        ...prevData,
+        currentAmount: newAmount,
+        setGoal: updatedSetGoal,
+        milestoneGoals: updatedMilestoneGoals
+      }
+
+      checkCompletedGoals(newData)
       sendTickerUpdate({ currentAmount: newAmount, lastAddedAmount: amount })
       return newData
     })
   }
 
-  const checkCompletedGoals = (newAmount: number) => {
-    const allGoals = [data.setGoal, ...data.milestoneGoals].filter(Boolean) as Goal[]
-    const newlyCompletedGoal = allGoals.find((goal) => data.currentAmount < goal.target && newAmount >= goal.target)
+  const checkCompletedGoals = (newData: DashboardData) => {
+    const allGoals = [newData.setGoal, ...newData.milestoneGoals].filter(Boolean) as Goal[]
+    const newlyCompletedGoal = allGoals.find((goal) => 
+      goal.progress >= goal.target && goal.progress - lastAddedAmount < goal.target
+    )
     if (newlyCompletedGoal) {
       setCompletedGoal(newlyCompletedGoal)
       sendTickerUpdate({ completedGoal: newlyCompletedGoal })
@@ -123,7 +155,7 @@ export default function Dashboard() {
     }
   }
 
-  const updateRecurringGoal = (goal: RecurringGoalType) => {
+  const updateRecurringGoal = (goal: RecurringGoalType | null) => {
     setData((prevData) => ({ ...prevData, recurringGoal: goal }))
   }
 
@@ -184,19 +216,21 @@ export default function Dashboard() {
         <TickerCustomization items={data.tickerItems} updateItems={updateTickerItems} />
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">News Ticker Preview</h2>
-          <div className="border p-4 h-24 bg-gray-100 dark:bg-gray-800">
-            <NewsTicker
-              setGoal={data.setGoal}
-              milestoneGoals={data.milestoneGoals}
-              currentAmount={data.currentAmount}
-              recurringGoal={data.recurringGoal}
-              customItems={data.tickerItems}
-              symbol={data.symbol}
-              symbolPosition={data.symbolPosition}
-              lastAddedAmount={lastAddedAmount}
-              completedGoal={completedGoal}
-              isVisible={true}
-            />
+          <div className="border p-4 h-[140px] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <div className="h-full flex items-center">
+              <NewsTicker
+                setGoal={data.setGoal}
+                milestoneGoals={data.milestoneGoals}
+                currentAmount={data.currentAmount}
+                recurringGoal={data.recurringGoal}
+                customItems={data.tickerItems}
+                symbol={data.symbol}
+                symbolPosition={data.symbolPosition}
+                lastAddedAmount={lastAddedAmount}
+                completedGoal={completedGoal}
+                isVisible={true}
+              />
+            </div>
           </div>
         </div>
       </div>

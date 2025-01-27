@@ -33,15 +33,16 @@ export default function TickerCustomization({ items, updateItems }: TickerCustom
       <form onSubmit={handleSubmit} className="space-y-4 mb-4">
         <div>
           <label htmlFor="newItem" className="block mb-1">
-            New Ticker Item
+            New Ticker Item (up to 3 lines)
           </label>
-          <input
-            type="text"
+          <textarea
             id="newItem"
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded resize-none"
             placeholder="Enter custom ticker text"
+            rows={3}
+            maxLength={300}
           />
         </div>
         <button type="submit" className="bg-teal-500 text-white px-4 py-2 rounded">
@@ -50,9 +51,9 @@ export default function TickerCustomization({ items, updateItems }: TickerCustom
       </form>
       <div className="space-y-2">
         {items.map((item) => (
-          <div key={item.id} className="flex justify-between items-center p-2 bg-gray-100 rounded">
-            <span>{item.content}</span>
-            <button onClick={() => handleRemove(item.id)} className="text-red-500 hover:text-red-700">
+          <div key={item.id} className="flex justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded">
+            <span className="whitespace-pre-line mr-4">{item.content}</span>
+            <button onClick={() => handleRemove(item.id)} className="text-red-500 hover:text-red-700 flex-shrink-0">
               Remove
             </button>
           </div>

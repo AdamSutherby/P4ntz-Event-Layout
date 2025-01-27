@@ -51,8 +51,9 @@ const ProgressBar = ({
     return () => clearTimeout(timer)
   }, [current])
 
-  const formatAmount = (amount: number) => {
-    return symbolPosition === "left" ? `${symbol}${amount.toFixed(2)}` : `${amount.toFixed(2)}${symbol}`
+  const formatAmount = (amount: number | null) => {
+    const value = amount ?? 0
+    return symbolPosition === "left" ? `${symbol}${value.toFixed(2)}` : `${value.toFixed(2)}${symbol}`
   }
 
   return (
@@ -89,7 +90,7 @@ const formatCustomContent = (content: React.ReactElement | string) => {
   }
   return (
     <div className="w-full">
-      <p className="text-white font-['Press_Start_2P'] text-xl text-shadow-neon text-center">
+      <p className="text-white font-['Press_Start_2P'] text-xl text-shadow-neon whitespace-pre-line text-center">
         {content}
       </p>
     </div>
@@ -259,14 +260,13 @@ export default function NewsTicker({
   const getGoalInfo = () => {
     const allGoals = [setGoal, ...(milestoneGoals || [])].filter(Boolean) as Goal[]
     return allGoals.map((goal) => {
-      const progress = (currentAmount / goal.target) * 100
-      // Ensure completed goals get returned but won't show in regular rotation
+      const progress = (goal.progress / goal.target) * 100
       const weight = progress >= 100 ? 0 : (1 + (progress > 0 ? 0.5 : 0))
       return {
         content: (
           <ProgressBar
             key={goal.id}
-            current={currentAmount}
+            current={goal.progress}
             target={goal.target}
             label={goal.name}
             animate={animateProgress}
@@ -279,8 +279,8 @@ export default function NewsTicker({
         weight,
         type: 'goal',
         id: goal.id,
-        target: goal.target, // Add target for completion check
-        name: goal.name // Add name for completion message
+        target: goal.target,
+        name: goal.name
       }
     })
   }
@@ -388,7 +388,8 @@ export default function NewsTicker({
         }
         
         .vaporwave-container {
-          height: 120px;
+          height: 100%;
+          min-height: 120px;
           display: flex;
           align-items: center;
           background: 
@@ -422,6 +423,7 @@ export default function NewsTicker({
             background-rotate 12s ease-in-out infinite,
             grid-move 15s linear infinite;
           will-change: background-position;
+          width: 100%;
         }
 
         .vaporwave-container::before {
