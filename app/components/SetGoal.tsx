@@ -4,14 +4,12 @@ import type { Goal } from "./Dashboard"
 interface SetGoalProps {
   goal: Goal | null;
   updateGoal: (goal: Goal | null) => void; // Update type to allow null
-  currentAmount: number;
   symbol: string;
 }
 
 const SetGoal: React.FC<SetGoalProps> = ({
   goal,
   updateGoal,
-  currentAmount,
   symbol,
 }) => {
   const [name, setName] = useState("")

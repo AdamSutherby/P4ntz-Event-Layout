@@ -4,14 +4,12 @@ import type { Goal } from "./Dashboard"
 interface MilestoneGoalsProps {
   goals: Goal[]
   updateGoals: (goals: Goal[]) => void
-  currentAmount: number
   symbol: string
 }
 
 export default function MilestoneGoals({
   goals,
   updateGoals,
-  currentAmount,
   symbol,
 }: MilestoneGoalsProps) {
   const [newGoalName, setNewGoalName] = useState("")

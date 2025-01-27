@@ -198,13 +198,11 @@ export default function Dashboard() {
         <SetGoal
           goal={data.setGoal}
           updateGoal={updateSetGoal}
-          currentAmount={data.currentAmount}
           symbol={data.symbol}
         />
         <MilestoneGoals
           goals={data.milestoneGoals}
           updateGoals={updateMilestoneGoals}
-          currentAmount={data.currentAmount}
           symbol={data.symbol}
         />
         <RecurringGoal
