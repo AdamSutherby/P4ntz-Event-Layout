@@ -233,8 +233,8 @@ export default function Dashboard() {
         <TickerCustomization 
           items={data.tickerItems} 
           updateItems={updateTickerItems}
-          showBackground={data.showBackground}
-          showBorder={data.showBorder}
+          showBackground={data.showBackground ?? true}
+          showBorder={data.showBorder ?? true}
           onToggleBackground={toggleBackground}
           onToggleBorder={toggleBorder}
         />
@@ -253,8 +253,8 @@ export default function Dashboard() {
                 symbolPosition={data.symbolPosition}
                 lastAddedAmount={lastAddedAmount}
                 completedGoal={completedGoal}
-                showBackground={data.showBackground}
-                showBorder={data.showBorder}
+                showBackground={data.showBackground ?? true}
+                showBorder={data.showBorder ?? true}
                 isVisible={true}
               />
             </div>
