@@ -18,6 +18,24 @@ type NewsTickerProps = {
   lastAddedAmount: number
   completedGoal: Goal | null
   isVisible: boolean
+  showBackground: boolean
+  showBorder: boolean
+}
+
+const formatTimeRemaining = (endTime: Date | string) => {
+  const now = new Date()
+  const endDate = new Date(endTime)
+  const diff = endDate.getTime() - now.getTime()
+  
+  if (diff <= 0) return "Ended"
+  
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  
+  if (days > 0) return `${days}d ${hours}h`
+  if (hours > 0) return `${hours}h ${minutes}m`
+  return `${minutes}m`
 }
 
 const ProgressBar = ({
@@ -29,6 +47,7 @@ const ProgressBar = ({
   prevAmount,
   symbol,
   symbolPosition,
+  endTime,
 }: {
   current: number
   target: number
@@ -38,6 +57,7 @@ const ProgressBar = ({
   prevAmount: number
   symbol: string
   symbolPosition: "left" | "right"
+  endTime?: Date
 }) => {
   const progress = (current / target) * 100
   const prevProgress = (prevAmount / target) * 100
@@ -58,7 +78,14 @@ const ProgressBar = ({
 
   return (
     <div className="w-full" style={{ flex: weight }}>
-      <p className="font-['Press_Start_2P'] mb-1 text-[#FF71CE] text-shadow-neon text-base">{label}</p>
+      <div className="flex justify-between items-center mb-1">
+        <p className="font-['Press_Start_2P'] text-[#FF71CE] text-shadow-neon text-base">{label}</p>
+        {endTime && (
+          <p className="font-['Press_Start_2P'] text-[#01FFFF] text-shadow-neon-sm text-sm">
+            {formatTimeRemaining(endTime)}
+          </p>
+        )}
+      </div>
       <div className="relative h-10 bg-[#01012B] rounded-full overflow-hidden border-2 border-[#05FFA1]">
         <div
           className="absolute inset-0 bg-gradient-to-r from-[#B967FF] to-[#FF71CE] transition-all duration-1000 ease-out"
@@ -108,6 +135,8 @@ export default function NewsTicker({
   lastAddedAmount,
   completedGoal,
   isVisible,
+  showBackground,
+  showBorder,
 }: NewsTickerProps) {
   const [animateProgress, setAnimateProgress] = useState(false)
   const [isContentVisible, setIsContentVisible] = useState(true) // Add this line
@@ -271,9 +300,10 @@ export default function NewsTicker({
             label={goal.name}
             animate={animateProgress}
             weight={progress}
-            prevAmount={prevAmountRef.current}
+            prevAmount={goal.progress - lastAddedAmount} // Use the difference here
             symbol={symbol}
             symbolPosition={symbolPosition}
+            endTime={goal.endTime}
           />
         ),
         weight,
@@ -323,18 +353,18 @@ export default function NewsTicker({
   const getMostProgressedGoalInfo = () => {
     const allGoals = [setGoal, ...(milestoneGoals || [])].filter(Boolean) as Goal[]
     const mostProgressedGoal = allGoals.reduce((prev, current) => {
-      const prevProgress = (currentAmount / prev.target) * 100
-      const currentProgress = (currentAmount / current.target) * 100
+      const prevProgress = (prev.progress / prev.target) * 100
+      const currentProgress = (current.progress / current.target) * 100
       return currentProgress > prevProgress ? current : prev
     })
 
     return (
       <ProgressBar
-        current={currentAmount}
+        current={mostProgressedGoal.progress}
         target={mostProgressedGoal.target}
         label={mostProgressedGoal.name}
         animate={true}
-        prevAmount={prevAmountRef.current}
+        prevAmount={mostProgressedGoal.progress - lastAddedAmount}
         symbol={symbol}
         symbolPosition={symbolPosition}
       />
@@ -377,7 +407,7 @@ export default function NewsTicker({
   }, [currentAmount])
 
   return (
-    <div className="vaporwave-container">
+    <div className={`vaporwave-container ${!showBackground ? 'no-background' : ''} ${!showBorder ? 'no-border' : ''}`}>
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
@@ -424,6 +454,15 @@ export default function NewsTicker({
             grid-move 15s linear infinite;
           will-change: background-position;
           width: 100%;
+        }
+
+        .vaporwave-container.no-background {
+          background: transparent;
+          animation: none;
+        }
+
+        .vaporwave-container.no-border::before {
+          display: none;
         }
 
         .vaporwave-container::before {
