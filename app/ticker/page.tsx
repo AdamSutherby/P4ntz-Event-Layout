@@ -128,6 +128,8 @@ export default function TickerPage() {
           lastAddedAmount={lastAddedAmount}
           completedGoal={completedGoal}
           isVisible={isVisible}
+          showBackground={true}
+          showBorder={true}
         />
       </div>
     </div>
