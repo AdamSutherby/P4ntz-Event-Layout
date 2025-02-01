@@ -14,11 +14,13 @@ const SetGoal: React.FC<SetGoalProps> = ({
 }) => {
   const [name, setName] = useState("")
   const [target, setTarget] = useState("")
+  const [endTime, setEndTime] = useState("")
 
   useEffect(() => {
     if (goal) {
       setName(goal.name)
       setTarget(goal.target.toString())
+      setEndTime(goal.endTime ? new Date(goal.endTime).toISOString().slice(0, 16) : "")
     }
   }, [goal])
 
@@ -28,7 +30,8 @@ const SetGoal: React.FC<SetGoalProps> = ({
       id: goal?.id || Date.now().toString(),
       name,
       target: Number.parseFloat(target),
-      progress: goal?.progress || 0  // Initialize progress to 0 for new goals
+      progress: goal?.progress || 0,  // Initialize progress to 0 for new goals
+      endTime: endTime ? new Date(endTime) : undefined
     })
   }
 
@@ -81,6 +84,18 @@ const SetGoal: React.FC<SetGoalProps> = ({
             required
             min="0"
             step="0.01"
+          />
+        </div>
+        <div>
+          <label htmlFor="endTime" className="block mb-1">
+            End Date/Time (optional)
+          </label>
+          <input
+            type="datetime-local"
+            id="endTime"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="w-full p-2 border rounded"
           />
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">

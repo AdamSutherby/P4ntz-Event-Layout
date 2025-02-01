@@ -14,6 +14,7 @@ export type Goal = {
   name: string
   target: number
   progress: number  // Add this field
+  endTime?: Date  // Add this line
 }
 
 export type RecurringGoalType = {
@@ -37,6 +38,8 @@ export type DashboardData = {
   symbolPosition: "left" | "right"
   completedGoal: Goal | null
   lastAddedAmount: number
+  showBackground?: boolean
+  showBorder?: boolean
 }
 
 const initialData: DashboardData = {
@@ -49,6 +52,8 @@ const initialData: DashboardData = {
   symbolPosition: "left",
   completedGoal: null,
   lastAddedAmount: 0,
+  showBackground: true,
+  showBorder: true,
 }
 
 export default function Dashboard() {
@@ -174,6 +179,20 @@ export default function Dashboard() {
     }))
   }
 
+  const toggleBackground = () => {
+    setData(prevData => ({
+      ...prevData,
+      showBackground: !prevData.showBackground
+    }))
+  }
+
+  const toggleBorder = () => {
+    setData(prevData => ({
+      ...prevData,
+      showBorder: !prevData.showBorder
+    }))
+  }
+
   useEffect(() => {
     if (lastAddedAmount !== 0) {
       setTimeout(() => setLastAddedAmount(0), 100) // Reset after animation starts
@@ -211,7 +230,15 @@ export default function Dashboard() {
           currentAmount={data.currentAmount}
           symbol={data.symbol}
         />
-        <TickerCustomization items={data.tickerItems} updateItems={updateTickerItems} />
+        <TickerCustomization 
+          items={data.tickerItems} 
+          updateItems={updateTickerItems}
+          showBackground={data.showBackground}
+          showBorder={data.showBorder}
+          onToggleBackground={toggleBackground}
+          onToggleBorder={toggleBorder}
+        />
+        
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">News Ticker Preview</h2>
           <div className="border p-4 h-[140px] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -226,6 +253,8 @@ export default function Dashboard() {
                 symbolPosition={data.symbolPosition}
                 lastAddedAmount={lastAddedAmount}
                 completedGoal={completedGoal}
+                showBackground={data.showBackground}
+                showBorder={data.showBorder}
                 isVisible={true}
               />
             </div>
