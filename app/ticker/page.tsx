@@ -90,6 +90,13 @@ export default function TickerPage() {
       } else if (event.detail.completedGoal) {
         setCompletedGoal(event.detail.completedGoal)
         currentDisplayRef.current = { type: 'goal', id: event.detail.completedGoal.id }
+      } else if (event.detail.showBackground !== undefined || event.detail.showBorder !== undefined) {
+        // Handle visual settings updates
+        setData(prevData => prevData ? {
+          ...prevData,
+          showBackground: event.detail.showBackground ?? prevData.showBackground,
+          showBorder: event.detail.showBorder ?? prevData.showBorder
+        } : null)
       }
     }
 
@@ -128,8 +135,8 @@ export default function TickerPage() {
           lastAddedAmount={lastAddedAmount}
           completedGoal={completedGoal}
           isVisible={isVisible}
-          showBackground={true}
-          showBorder={true}
+          showBackground={data?.showBackground ?? true}
+          showBorder={data?.showBorder ?? true}
         />
       </div>
     </div>

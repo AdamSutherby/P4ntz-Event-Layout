@@ -180,17 +180,25 @@ export default function Dashboard() {
   }
 
   const toggleBackground = () => {
-    setData(prevData => ({
-      ...prevData,
-      showBackground: !prevData.showBackground
-    }))
+    setData(prevData => {
+      const newData = {
+        ...prevData,
+        showBackground: !prevData.showBackground
+      }
+      sendTickerUpdate({ showBackground: !prevData.showBackground })
+      return newData
+    })
   }
 
   const toggleBorder = () => {
-    setData(prevData => ({
-      ...prevData,
-      showBorder: !prevData.showBorder
-    }))
+    setData(prevData => {
+      const newData = {
+        ...prevData,
+        showBorder: !prevData.showBorder
+      }
+      sendTickerUpdate({ showBorder: !prevData.showBorder })
+      return newData
+    })
   }
 
   useEffect(() => {
